@@ -1,0 +1,61 @@
+{
+  "expo": {
+    "name": "StockFlow",
+    "slug": "stockflow",
+    "version": "1.0.0",
+    "sdkVersion": "53.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": false,
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0F172A"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.stockflow.app",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "StockFlow needs access to save exported files.",
+        "NSDocumentsFolderUsageDescription": "StockFlow needs access to import and export data files."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0F172A"
+      },
+      "package": "com.stockflow.app",
+      "permissions": [
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE"
+      ],
+      "versionCode": 1
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-sqlite"
+      ],
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Allow StockFlow to save exported files.",
+          "savePhotosPermission": "Allow StockFlow to save exports.",
+          "isAccessMediaLocationEnabled": true
+        }
+      ],
+      "expo-document-picker"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "YOUR_EAS_PROJECT_ID"
+      }
+    }
+  }
+}

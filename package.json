@@ -1,0 +1,49 @@
+{
+  "name": "stockflow",
+  "version": "1.0.0",
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "prebuild": "expo prebuild --clean",
+    "build:android": "eas build --platform android --profile preview",
+    "build:production": "eas build --platform android --profile production"
+  },
+  "dependencies": {
+    "@expo/vector-icons": "^14.0.4",
+    "@react-native-async-storage/async-storage": "^2.1.2",
+    "@react-navigation/bottom-tabs": "^6.6.1",
+    "@react-navigation/native": "^6.1.18",
+    "@react-navigation/native-stack": "^6.11.0",
+    "date-fns": "^3.6.0",
+    "expo": "~53.0.0",
+    "expo-auth-session": "^6.1.5",
+    "expo-crypto": "^14.0.3",
+    "expo-document-picker": "^13.0.3",
+    "expo-file-system": "^18.0.11",
+    "expo-localization": "^16.0.1",
+    "expo-media-library": "^17.0.6",
+    "expo-print": "^14.0.3",
+    "expo-sharing": "^13.0.2",
+    "expo-sqlite": "^15.1.4",
+    "expo-status-bar": "~2.2.0",
+    "expo-web-browser": "^14.0.2",
+    "i18next": "^23.11.5",
+    "react": "19.0.0",
+    "react-i18next": "^15.0.1",
+    "react-native": "0.79.2",
+    "react-native-gesture-handler": "~2.24.0",
+    "react-native-reanimated": "~3.17.4",
+    "react-native-safe-area-context": "5.4.0",
+    "react-native-screens": "~4.11.1",
+    "zustand": "^5.0.3"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.0",
+    "@types/react": "~19.0.10",
+    "typescript": "^5.3.3"
+  },
+  "private": true
+}

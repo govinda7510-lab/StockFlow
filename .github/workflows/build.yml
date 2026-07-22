@@ -1,0 +1,152 @@
+name: Build StockFlow APK
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Build type'
+        required: false
+        default: 'local'
+        type: choice
+        options:
+          - local
+          - eas
+
+jobs:
+  # ─────────────────────────────────────────────────────────────────────────────
+  # JOB 1: Local Gradle Build — No Expo account needed, always produces APK
+  # ─────────────────────────────────────────────────────────────────────────────
+  build-local:
+    name: 🔨 Build APK (Local Gradle)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📦 Checkout code
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+          cache-dependency-path: StockFlow/package-lock.json
+
+      - name: ☕ Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: 🤖 Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: 📥 Install dependencies
+        working-directory: StockFlow
+        run: npm ci
+
+      - name: 🏗️ Expo Prebuild (generate Android native project)
+        working-directory: StockFlow
+        run: |
+          npx expo prebuild \
+            --platform android \
+            --non-interactive \
+            --clean
+        env:
+          EXPO_NO_TELEMETRY: 1
+
+      - name: 🔑 Make Gradle wrapper executable
+        working-directory: StockFlow/android
+        run: chmod +x gradlew
+
+      - name: 🔨 Build release APK with Gradle
+        working-directory: StockFlow/android
+        run: ./gradlew assembleRelease --no-daemon
+        env:
+          GRADLE_OPTS: '-Dorg.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=512m'
+
+      - name: 📋 Rename APK
+        run: |
+          mkdir -p StockFlow/build
+          cp StockFlow/android/app/build/outputs/apk/release/app-release.apk \
+             StockFlow/build/StockFlow-v1.0-build${{ github.run_number }}.apk
+
+      - name: 📤 Upload APK as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: StockFlow-APK-Build-${{ github.run_number }}
+          path: StockFlow/build/StockFlow-v1.0-build${{ github.run_number }}.apk
+          retention-days: 30
+
+      - name: 🏷️ Create GitHub Release with APK
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0-build-${{ github.run_number }}
+          name: "StockFlow v1.0 — Build #${{ github.run_number }}"
+          body: |
+            ## 📦 StockFlow APK — Ready to Download!
+
+            | Info | Value |
+            |------|-------|
+            | Build # | ${{ github.run_number }} |
+            | Commit | `${{ github.sha }}` |
+            | Branch | `${{ github.ref_name }}` |
+            | Built by | ${{ github.actor }} |
+
+            ## 📲 How to Install on Android
+
+            1. Download `StockFlow-v1.0-build${{ github.run_number }}.apk` from **Assets** below
+            2. On your Android phone: **Settings → Security → Unknown Sources → Enable**
+               - (On Android 8+: **Settings → Apps → Special Access → Install Unknown Apps → Files → Allow**)
+            3. Open the downloaded APK file and tap **Install**
+            4. Open **StockFlow** and enjoy! 🎉
+
+            ## ✨ Features
+            - 📦 Stock & Inventory Management
+            - 📄 PDF Report Export
+            - 💾 JSON/CSV Backup & Restore
+            - 🌍 English & Urdu Support
+          files: StockFlow/build/StockFlow-v1.0-build${{ github.run_number }}.apk
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # JOB 2: EAS Build — Only runs if EXPO_TOKEN secret is set
+  # ─────────────────────────────────────────────────────────────────────────────
+  build-eas:
+    name: ☁️ Build APK (EAS Cloud)
+    runs-on: ubuntu-latest
+    if: ${{ vars.USE_EAS == 'true' }}
+
+    steps:
+      - name: 📦 Checkout code
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+          cache-dependency-path: StockFlow/package-lock.json
+
+      - name: 📥 Install EAS CLI
+        run: npm install -g eas-cli
+
+      - name: 📥 Install dependencies
+        working-directory: StockFlow
+        run: npm ci
+
+      - name: 🔨 EAS Build
+        working-directory: StockFlow
+        run: |
+          eas build \
+            --platform android \
+            --profile preview \
+            --non-interactive \
+            --wait
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}

@@ -1,0 +1,40 @@
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# EAS / Builds
+.eas/build/
+build/
+*.apk
+*.aab
+*.ipa
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# TypeScript
+*.tsbuildinfo
